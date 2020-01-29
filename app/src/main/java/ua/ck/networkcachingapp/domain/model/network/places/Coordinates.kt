@@ -1,4 +1,4 @@
-package ua.ck.networkcachingapp.domain.model.places
+package ua.ck.networkcachingapp.domain.model.network.places
 
 import com.google.gson.annotations.SerializedName
 

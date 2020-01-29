@@ -1,22 +1,16 @@
 package ua.ck.networkcachingapp.presentation.main
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.activity_main.*
 import ua.ck.networkcachingapp.R
-import ua.ck.networkcachingapp.domain.model.places.PlaceResponse
-import java.io.File
-import java.io.FileOutputStream
-import java.net.URL
+import ua.ck.networkcachingapp.domain.model.network.places.PlaceResponse
+import ua.ck.networkcachingapp.domain.state.PlaceListState
+import ua.ck.networkcachingapp.presentation.internal.Extensions
 
 class MainActivity : AppCompatActivity() {
-
-    private val baseUrl = "https://travelche.everlabs.com/"
 
     private val mainViewModel by lazy {
         ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -26,9 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initUi()
         initViewModelSubscribers()
-        getData()
+        getPlaceList()
     }
-
 
     private fun initUi() {
         // Layout
@@ -37,60 +30,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViewModelSubscribers() {
 
-        // Places
-        this.mainViewModel.places
-            .observe(this, Observer { placeList ->
-                // Image Caching
-                cacheFiles(placeList = placeList)
-            })
-
-        // Places: Error
-        this.mainViewModel.placesError
-            .observe(this, Observer {
-                Toast.makeText(this, "ERROR", Toast.LENGTH_LONG)
-                    .show()
+        // Place List: Status
+        this.mainViewModel.placeListState
+            .observe(this, Observer { placeListState ->
+                when (placeListState) {
+                    is PlaceListState.Success -> {
+                        savePlaceListToDatabase(
+                            placeList = placeListState.placeListResponse
+                        )
+                    }
+                    is PlaceListState.Error -> {
+                        showMessage(message = "PlaceListState => Error")
+                    }
+                }
             })
     }
 
-    private fun getData() {
-        // Get Places
+    // Get "Place List"
+    private fun getPlaceList() {
         this.mainViewModel.getPlaces()
     }
 
-    private fun cacheFiles(placeList: List<PlaceResponse>) {
+    // Save PlaceList to Database
+    private fun savePlaceListToDatabase(placeList: List<PlaceResponse>) {
+        this.mainViewModel.savePlaceListToDatabase(this, placeList)
+    }
 
-        // App Path
-        val appPath = this.filesDir
-
-        try {
-            val filePath = File(appPath, "images")
-
-            // Create folder
-            if (!filePath.exists()) {
-                filePath.mkdir()
-            }
-
-            placeList.forEach { place ->
-
-                Log.i("MainActivity", "${place.title}")
-
-                val image = File(filePath, "${place.title}.jpg")
-
-                val fileOuStream = FileOutputStream(image)
-
-                val url = URL(place.photoUrl)
-                val bitmapImage = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                bitmapImage.compress(Bitmap.CompressFormat.JPEG, 85, fileOuStream)
-
-                fileOuStream.flush()
-                fileOuStream.close()
-            }
-
-
-        } catch (e: Exception) {
-
-            Log.i("MainActivity", "Exception")
-
-        }
+    private fun showMessage(message: String) {
+        Extensions.showSnackbar(
+            view = activityMain_constraintLayout_parent,
+            message = message
+        )
     }
 }
