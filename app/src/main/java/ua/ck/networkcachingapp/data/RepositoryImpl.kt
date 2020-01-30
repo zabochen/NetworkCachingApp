@@ -5,6 +5,5 @@ import ua.ck.networkcachingapp.domain.repository.Repository
 
 class RepositoryImpl() : Repository {
     override fun savePlaceList(placeList: List<Place>) {
-
     }
 }

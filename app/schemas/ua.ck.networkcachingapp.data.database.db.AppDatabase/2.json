@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "b4800b608040d7c988c2f7634ed82ce6",
+    "version": 2,
+    "identityHash": "e3e02af674c69c6af1278f515935b809",
     "entities": [
       {
         "tableName": "places",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `title_en` TEXT NOT NULL, `description` TEXT NOT NULL, `description_en` TEXT NOT NULL, `category_id` INTEGER NOT NULL, `photo_url` TEXT NOT NULL, `photo_url_local` TEXT NOT NULL, `coordinates_lat` TEXT NOT NULL, `coordinates_lng` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `title_en` TEXT NOT NULL, `description` TEXT NOT NULL, `description_en` TEXT NOT NULL, `category_id` INTEGER NOT NULL, `photo_url` TEXT NOT NULL, `coordinates_lat` TEXT NOT NULL, `coordinates_lng` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -51,12 +51,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "photoUrlLocal",
-            "columnName": "photo_url_local",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "coordinates.lat",
             "columnName": "coordinates_lat",
             "affinity": "TEXT",
@@ -82,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b4800b608040d7c988c2f7634ed82ce6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e3e02af674c69c6af1278f515935b809')"
     ]
   }
 }
